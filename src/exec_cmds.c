@@ -18,9 +18,15 @@ static int spawn_proc (int in, int out, t_cmds *cmd)
 			dup2 (out, 1);
 			close (out);
 		}
-		return execve (cmd->argv [0], (char * const *)cmd->argv, NULL);
+		exit(execve (cmd->argv [0], (char * const *)cmd->argv, NULL));
 	}
-	return pid;
+
+	int	state = -1;
+	if (waitpid(pid, &state, WUNTRACED) == -1)
+		return (-1);
+	if (WIFEXITED(state))
+		return (1);
+	return -1;
 }
 
 char	**execute_cmds(uint16_t n, t_cmds *cmd)
