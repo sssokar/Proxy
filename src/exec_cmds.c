@@ -66,3 +66,18 @@ char	**execute_cmds(uint16_t n, t_cmds *cmd)
 		;
 	return split(ptr, '\n');
 }
+
+/*!
+ * \fn long execute_simple_cmds(t_cmds *)
+ * \brief
+ */
+long	execute_simple_cmds(t_cmds *cmd)
+{
+	int pid, state;
+
+  	if ((pid = fork()) == 0)
+		exit(execve (cmd->argv [0], (char * const *)cmd->argv, NULL));
+	if (waitpid(pid, &state, WUNTRACED) == -1)
+		return (-1);
+	return (pid);
+}
